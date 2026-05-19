@@ -7,11 +7,11 @@ const TITULOS = [
   "Redes e Infraestrutura",
   "Manutenção de Celulares",
   "Montagem de PCs",
-  "Mídia Digital in-Store"
+  "Soluções em Tecnologia"
 ];
 
 export default function Home() {
-  const [isStoreOpen, setIsStoreOpen] = useState(false);
+  const [storeStatus, setStoreStatus] = useState({ isOpen: false, text: "Fechado" });
   const [text, setText] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -46,9 +46,19 @@ export default function Home() {
     return () => { clearTimeout(timer1); clearTimeout(timer2); };
   }, []);
 
+  // Lógica de Funcionamento Comercial Real (Seg a Sáb, 09h às 18h)
   useEffect(() => {
-    const hour = new Date().getHours();
-    setIsStoreOpen(hour >= 14 || hour < 3);
+    const now = new Date();
+    const day = now.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+    const hour = now.getHours();
+
+    if (day === 0) {
+      setStoreStatus({ isOpen: false, text: "Fechado (Abre Segunda às 09:00)" });
+    } else if (hour >= 9 && hour < 18) {
+      setStoreStatus({ isOpen: true, text: "Aberto Agora" });
+    } else {
+      setStoreStatus({ isOpen: false, text: "Fechado no Momento" });
+    }
   }, []);
 
   useEffect(() => {
@@ -144,7 +154,6 @@ export default function Home() {
               <button onClick={() => setShowTerms(false)} className="text-gray-400 hover:text-red-400 text-2xl sm:text-3xl font-bold leading-none">&times;</button>
             </div>
             
-            {/* TEXTO COMPLETO E INTACTO DOS TERMOS DE USO */}
             <div className="p-4 sm:p-6 overflow-y-auto text-gray-300 text-xs sm:text-sm space-y-4">
               <p><strong>Termos de Uso e Serviço da Ponto Com Informatica De Poços De Caldas LTDA</strong></p>
               <p>Seja Bem-Vindo ao site da Ponto Com Informatica De Poços De Caldas LTDA. Antes de explorar tudo o que temos a oferecer, é importante que você entenda e concorde com algumas regras básicas que regem o uso do nosso site pontocompc.grupozynsa.com, e qualquer outro serviço digital que nós oferecemos, como lojas e plataformas de e-commerce.</p>
@@ -158,10 +167,10 @@ export default function Home() {
 
               <h3 className="text-cyan-400 font-bold mt-4">3. Sua Privacidade</h3>
               <p>Na Ponto Com Informatica De Poços De Caldas LTDA, a privacidade é um valor essencial. Ao interagir com nosso site, você aceita nossa Política de Privacidade, que detalha nossa abordagem responsável e conforme às leis para o manejo dos seus dados pessoais. Nosso compromisso é com a transparência e a segurança: explicamos como coletamos, usamos e protegemos suas informações, garantindo sua privacidade e oferecendo controle sobre seus dados.</p>
-              <p>Adotamos práticas de segurança para proteger suas informações contra acesso não autorizado e compartilhamento indevido, assegurando que qualquer cooperação com terceiros ocorra apenas com base na sua aprovação ou exigências legais claras, reafirmando nosso comprometimento com a sua confiança e segurança digital.</p>
+              <p>Adotamos práticas de segurança para proteger suas informações contra acesso não autorizado e compartilhamento indevido, assegurando que any cooperação com terceiros ocorra apenas com base na sua aprovação ou exigências legais claras, reafirmando nosso comprometimento com a sua confiança e segurança digital.</p>
 
               <h3 className="text-cyan-400 font-bold mt-4">4. Direitos de Conteúdo</h3>
-              <p>O conteúdo disponível no site da Ponto Com Informatica De Poços De Caldas LTDA, incluindo, mas não se limitando a, textos, imagens, ilustrações, designs, ícones, fotografias, programas de computador, videoclipes e áudios, constitui propriedade intelectual protegida tanto pela legislação nacional quanto por tratados internacionais sobre direitos autorais e propriedade industrial. Essa propriedade engloba não apenas materiais diretamente produzidos e publicados por nós, mas também conteúdos que são utilizados sob licença ou permissão de terceiros, garantindo que todos os direitos sejam respeitados conforme as normativas vigentes.</p>
+              <p>O conteúdo disponível no site da Ponto Com Informatica De Poços De Caldas LTDA, incluindo, mas não se limitando a, textos, imagens, ilustrações, designs, ícones, fotografias, programas de computador, videoclipes e áudios, constitui propriedade intelectual protegida tanto pela legislação nacional quanto por tratados internacionais sobre direitos autorais e propriedade industrial. Essa propriedade engloba não apenas materiais diretamente produzidos e publicados por nós, mas também conteúdos que são utilizados sob licença ou permisso de terceiros, garantindo que todos os direitos sejam respeitados conforme as normativas vigentes.</p>
               <p>Ao acessar nosso site, você recebe uma licença limitada, não exclusiva e revogável para visualizar e usar o conteúdo para fins pessoais e não comerciais. Isso implica que qualquer reprodução, distribuição, transmissão ou modificação do conteúdo, sem a devida autorização escrita da Ponto Com Informatica De Poços De Caldas LTDA, é estritamente proibida. Tal restrição visa proteger os direitos de propriedade intelectual associados aos materiais disponibilizados, assegurando que sua utilização não infrinja os direitos dos criadores ou detentores desses direitos, além de promover um ambiente de respeito e valorização da criatividade e inovação.</p>
 
               <h3 className="text-cyan-400 font-bold mt-4">5. Cookies e Mais</h3>
@@ -197,31 +206,19 @@ export default function Home() {
         </div>
       )}
 
-      {/* NOVO: BOTÃO FLUTUANTE DO WHATSAPP */}
       <a
         href="https://wa.me/5535998344139"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-[65] flex items-center gap-2 sm:gap-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white p-2 pr-4 sm:p-3 sm:pr-5 rounded-full shadow-[0_0_20px_rgba(37,211,102,0.5)] hover:shadow-[0_0_25px_rgba(37,211,102,0.7)] transition-all duration-300 transform hover:scale-105 group"
+        className="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-[65] flex items-center gap-2 sm:gap-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white p-2 pr-4 sm:p-3 sm:pr-5 rounded-full shadow-[0_0_20px_rgba(37,211,102,0.5)] hover:shadow-[0_0_25px_rgba(37,211,102,0.7)] transition-all duration-300 transform hover:scale-105"
       >
         <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center">
-          <Image 
-            src="/whatsapp-logo..png" 
-            alt="WhatsApp" 
-            fill 
-            className="object-contain p-1.5 sm:p-2 drop-shadow-lg animate-pulse" 
-          />
+          <Image src="/whatsapp-logo..png" alt="WhatsApp" fill className="object-contain p-1.5 sm:p-2 drop-shadow-lg animate-pulse" />
         </div>
         <div className="flex flex-col">
-          <span className="text-[10px] sm:text-[11px] text-green-100 font-semibold leading-tight uppercase tracking-wider">
-            Dúvidas?
-          </span>
-          <span className="text-xs sm:text-sm font-bold leading-tight">
-            Nos chame no Zap!
-          </span>
+          <span className="text-[10px] sm:text-[11px] text-green-100 font-semibold leading-tight uppercase tracking-wider">Dúvidas?</span>
+          <span className="text-xs sm:text-sm font-bold leading-tight">Nos chame no Zap!</span>
         </div>
-        
-        {/* Ponto de notificação (balãozinho vermelho chamando atenção) */}
         <span className="absolute -top-1 -right-1 flex h-4 w-4 sm:h-5 sm:w-5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-red-500 border-2 border-[#25D366]"></span>
@@ -298,7 +295,7 @@ export default function Home() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row gap-12 items-center">
               <div className="md:w-1/2 space-y-6">
                 <span className="text-cyan-400 font-bold text-xs uppercase tracking-widest block">Sobre a Ponto Com</span>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">Mais do que consertar, nós resolvemos o seu problema.</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">Mais do que consertar, nós resolvemos o seu problem.</h2>
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                   Sabemos o quanto você depende do seu smartphone ou computador no dia a dia. Ficar sem eles não é uma opção. Por isso, a Ponto Com Informática estruturou laboratórios de ponta para garantir que o seu reparo seja feito não apenas com peças de alta qualidade, mas com a agilidade que a sua rotina exige.
                 </p>
@@ -343,28 +340,25 @@ export default function Home() {
             </div>
           </section>
 
+          {/* SEÇÃO NOVA: CONVITE PARA A LOJA FÍSICA (SUBSTITUIU A TV) */}
           <section className="w-full max-w-7xl mx-auto px-4 pb-16 sm:pb-24">
             <div className="bg-gradient-to-r from-blue-900/40 via-cyan-900/20 to-black border border-cyan-500/30 rounded-3xl p-6 sm:p-12 flex flex-col lg:flex-row items-center gap-8 shadow-[0_0_30px_rgba(6,182,212,0.1)] relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]"></div>
               
               <div className="lg:w-2/3 relative z-10">
-                <span className="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 inline-block">Anuncie Conosco</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">Sua marca na melhor loja de Poços e região</h2>
+                <span className="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 inline-block">Visite Nosso Laboratório</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">Traga seu aparelho para um diagnóstico presencial</h2>
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
-                  Deseja que sua empresa seja vista por dezenas de clientes todos os dias? Adquira um espaço publicitário em nossa TV interna de mídia digital. É a oportunidade perfeita para dar destaque ao seu negócio dentro da nossa loja física e levar sua marca a outro nível!
+                  Nada supera a segurança de conversar direto com o técnico. Nossa estrutura no Centro de Poços de Caldas está de portas abertas para te receber. Traga seu notebook, celular ou computador para uma avaliação rápida, honesta e com orçamento sem compromisso na hora!
                 </p>
-                <a href="https://wa.me/5535998344139?text=Ol%C3%A1!%20Gostaria%20de%20saber%20como%20anunciar%20a%20minha%20marca%20na%20TV%20da%20Ponto%20Com." target="_blank" rel="noopener noreferrer" className="inline-block bg-white text-black font-bold px-6 py-3 rounded-xl text-sm sm:text-base hover:bg-gray-200 transition-colors">Quero Anunciar na TV</a>
+                <a href="https://maps.google.com/?q=R.+Santa+Catarina,+203+-+Centro,+Poços+de+Caldas+-+MG,+37701-750" target="_blank" rel="noopener noreferrer" className="inline-block bg-white text-black font-bold px-6 py-3 rounded-xl text-sm sm:text-base hover:bg-gray-200 transition-colors text-center w-full sm:w-auto">Abrir no Google Maps</a>
               </div>
               
               <div className="lg:w-1/3 w-full relative z-10 flex justify-center">
-                <div className="w-full max-w-xs aspect-[4/3] bg-black border-4 border-gray-800 rounded-xl relative overflow-hidden shadow-2xl flex flex-col">
-                  <div className="bg-cyan-900 text-white text-[10px] sm:text-xs p-2 font-bold flex justify-between uppercase">
-                    <span>ESPAÇO PUBLICITÁRIO</span>
-                    <span>Ponto Com</span>
-                  </div>
-                  <div className="flex-1 bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center p-4 text-center">
-                    <p className="text-white font-extrabold text-xl animate-pulse drop-shadow-md">SUA MARCA AQUI</p>
-                  </div>
+                <div className="w-full max-w-xs bg-white/5 border border-white/10 rounded-2xl p-6 text-center backdrop-blur-md">
+                  <span className="text-4xl block mb-3">📍</span>
+                  <h4 className="text-white font-bold text-base mb-1">Ponto de Referência</h4>
+                  <p className="text-gray-400 text-xs leading-relaxed">Localização privilegiada no coração de Poços de Caldas, com fácil acesso para você deixar e buscar seu equipamento com total conforto.</p>
                 </div>
               </div>
             </div>
@@ -425,17 +419,26 @@ export default function Home() {
           <footer id="contato" className="w-full bg-black/90 backdrop-blur-2xl border-t border-white/10 mt-auto pb-24 md:pb-8">
             <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-white/10">
               
-              <div className="text-center md:text-left flex flex-col items-center md:items-start bg-white/5 p-5 sm:p-6 rounded-2xl border border-white/5">
+              {/* HORÁRIOS CORRIGIDOS AQUI 👇 */}
+              <div className="text-center md:text-left flex flex-col items-center md:items-start bg-white/5 p-5 sm:p-6 rounded-2xl border border-white/5 w-full">
                 <span className="text-cyan-400 font-bold text-[10px] uppercase tracking-widest block mb-2">Unidade Poços de Caldas</span>
                 <p className="text-white text-sm sm:text-base font-medium mb-1">R. Santa Catarina, 203 - Centro</p>
-                <div className="flex items-center gap-2 mt-2 mb-3">
-                  {isStoreOpen ? (
-                    <span className="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded border border-green-500/30">Aberto Agora (Até 03h)</span>
-                  ) : (
-                    <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded border border-red-500/30">Fechado</span>
-                  )}
+                <p className="text-gray-400 text-xs mb-2">Segunda a Sábado: 09h às 18h</p>
+                
+                <div className="flex flex-col gap-1.5 w-full items-center md:items-start">
+                  <div className="flex items-center gap-2">
+                    {storeStatus.isOpen ? (
+                      <span className="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded border border-green-500/30 font-bold">{storeStatus.text}</span>
+                    ) : (
+                      <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded border border-red-500/30 font-bold">{storeStatus.text}</span>
+                    )}
+                  </div>
+                  {/* ALERTA DE FERIADO IGUAL GOOGLE */}
+                  <span className="text-[10px] text-amber-400/80 flex items-center gap-1 mt-1">
+                    ⚠️ Em feriados, o horário de atendimento pode variar.
+                  </span>
                 </div>
-                <p className="text-white text-xl sm:text-2xl font-bold mt-2">(35) 99834-4139</p>
+                <p className="text-white text-xl font-bold mt-3">(35) 99834-4139</p>
               </div>
               
               <div className="text-center flex flex-col items-center justify-center gap-3">
