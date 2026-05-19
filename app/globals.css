@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #00040f;
+  --foreground: #f9fafb;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Fundo Dinâmico Full Screen */
+.bg-tech-fullscreen {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  background-color: #00040f;
+  overflow: hidden;
+}
+
+/* A Malha de fundo que agora tem um azul mais tecnológico */
+.bg-tech-fullscreen::before {
+  content: "";
+  position: absolute;
+  top: -10%; left: -10%; width: 120%; height: 120%;
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(6, 182, 212, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.07) 1px, transparent 1px);
+  animation: gridPan 20s linear infinite;
+}
+
+@keyframes gridPan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(50px); }
+}
+
+/* Efeito de Relâmpago / Trovão */
+.bg-tech-fullscreen::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.3), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  animation: thunderStrike 7s infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes thunderStrike {
+  0%, 91%, 94%, 96%, 100% { opacity: 0; }
+  92%, 95% { opacity: 0.7; } /* Dois piscar rápidos parecendo trovão */
+}
+
+/* Raios de luz viajando pela tela (Data Streams) */
+.light-beam-h {
+  position: absolute;
+  height: 2px;
+  width: 150px;
+  background: linear-gradient(90deg, transparent, #06b6d4, #fff, transparent);
+  box-shadow: 0 0 10px #06b6d4, 0 0 20px #06b6d4;
+  animation: beamMoveH 5s linear infinite;
+  opacity: 0;
+}
+
+.light-beam-v {
+  position: absolute;
+  width: 2px;
+  height: 150px;
+  background: linear-gradient(180deg, transparent, #3b82f6, #fff, transparent);
+  box-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+  animation: beamMoveV 6s linear infinite;
+  opacity: 0;
+}
+
+@keyframes beamMoveH {
+  0% { left: -10vw; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 110vw; opacity: 0; }
+}
+
+@keyframes beamMoveV {
+  0% { top: -10vh; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 110vh; opacity: 0; }
+}
+
+/* Tela do Mini-game */
+.cyber-terminal {
+  background: rgba(5, 5, 10, 0.9);
+  box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.2), 0 0 15px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.scanline {
+  width: 100%;
+  height: 100px;
+  z-index: 10;
+  position: absolute;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(6, 182, 212, 0.1) 50%, rgba(0,0,0,0) 100%);
+  opacity: 0.5;
+  animation: scanline 6s linear infinite;
+}
+
+@keyframes scanline {
+  0% { top: -100px; }
+  100% { top: 100%; }
 }
