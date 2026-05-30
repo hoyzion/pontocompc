@@ -295,7 +295,7 @@ export default function Home() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row gap-12 items-center">
               <div className="md:w-1/2 space-y-6">
                 <span className="text-cyan-400 font-bold text-xs uppercase tracking-widest block">Sobre a Ponto Com</span>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">Mais do que consertar, nós resolvemos o seu problem.</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">Mais do que consertar, nós resolvemos o seu problema.</h2>
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                   Sabemos o quanto você depende do seu smartphone ou computador no dia a dia. Ficar sem eles não é uma opção. Por isso, a Ponto Com Informática estruturou laboratórios de ponta para garantir que o seu reparo seja feito não apenas com peças de alta qualidade, mas com a agilidade que a sua rotina exige.
                 </p>
